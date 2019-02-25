@@ -22,16 +22,16 @@ public class Swagger2 {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.pacific.rsp.ce.web.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.ljy.sbtemplate.web.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("RSP HR RESTFUL APIS")
-                .description("RSP HR 接口文档")
-                .termsOfServiceUrl("http://www.pacific.com/")
-                .contact("Jackson Wang")
+                .title("SB-TEMPLATE RESTFUL APIS")
+                .description("SB-TEMPLATE 接口文档")
+                .termsOfServiceUrl("http://www.lokiy.com/")
+                .contact("Lokiy")
                 .version("1.0")
                 .build();
     }
