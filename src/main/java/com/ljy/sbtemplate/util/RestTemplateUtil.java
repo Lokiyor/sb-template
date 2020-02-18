@@ -1,11 +1,7 @@
 package com.ljy.sbtemplate.util;
 
 import com.google.common.collect.Maps;
-import com.ljy.sbtemplate.exception.BusinessException;
-import com.ljy.sbtemplate.model.enums.SbtEnum;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,7 +10,6 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 
 /**
@@ -27,14 +22,6 @@ public class RestTemplateUtil {
 
     private static boolean useEurekaFlag = true;
 
-    @Autowired
-    private LoadBalancerClient loadBalancerClient;
-
-    @PostConstruct
-    public void init() {
-        restTemplateUtil = this;
-        restTemplateUtil.loadBalancerClient = this.loadBalancerClient;
-    }
 
     private static final RestTemplate INSTANCE = new RestTemplate();
 
@@ -99,35 +86,6 @@ public class RestTemplateUtil {
 
 
 
-    public static String rpcGet(String serverId, String url, String finalUrl){
-        finalUrl = getFinalUrl(serverId, url, finalUrl);
-        return get(finalUrl);
-    }
-
-
-    public static <T> T rpcPostJson(String serverId, String url, String finalUrl,Object param,Class<T> respClass){
-        finalUrl = getFinalUrl(serverId, url, finalUrl);
-        ResponseEntity<T> responseEntity =
-                RestTemplateUtil.getInstance().postForEntity(finalUrl, param, respClass);
-        return responseEntity.getBody();
-    }
-
-
-    public static <T> String rpcPost(String serverId, String url, String finalUrl, T data) throws Exception {
-        finalUrl = getFinalUrl(serverId, url, finalUrl);
-        return post(finalUrl, data);
-    }
-
-    private static String getFinalUrl(String serverId, String url, String finalUrl){
-        if(useEurekaFlag) {
-            ServiceInstance serviceInstance = restTemplateUtil.loadBalancerClient.choose(serverId);
-            if (serviceInstance == null) {
-                throw new BusinessException(ErrorCode.ERROR_SERVER.getCode(), SbtEnum.val(serverId) + ErrorCode.ERROR_SERVER.getMsg());
-            }
-            finalUrl = "http://" + serviceInstance.getHost() + ":" + serviceInstance.getPort() + url;
-        }
-        return finalUrl;
-    }
 
     public static void main(String[] args){
         Map<String,Object> map = Maps.newHashMap();
